@@ -7,11 +7,11 @@
 
 ## List of samples 
 
-* [Draw primitive](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-triangle/README.md)
-* [Draw 3D cube](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-3d-cube/README.md)
-* [Transformation and projection](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-mvp/README.md)
-* [Texture mapping](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-3d-cube-texture/README.md)
-* [Curve](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-curve/README.md)
-* [Parking Guideline](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-guideline/README.md)
-* [Lighting](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-lighting/README.md)
-* [OpenGL Mathmetics(GLM)](http://mod.lge.com/hub/hunkyo.jung/gles-tutorials/blob/master/gles-glm/README.md)
+* [Draw primitive](./gles-triangle/README.md)
+* [Draw 3D cube](./gles-3d-cube/README.md)
+* [Transformation and projection](./gles-mvp/README.md)
+* [Texture mapping](./gles-3d-cube-texture/README.md)
+* [Curve](./gles-curve/README.md)
+* [Parking Guideline](./gles-guideline/README.md)
+* [Lighting](./gles-lighting/README.md)
+* [OpenGL Mathmetics(GLM)](./gles-glm/README.md)
