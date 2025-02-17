@@ -11,7 +11,6 @@
 * [Draw 3D cube](./gles-3d-cube/README.md)
 * [Transformation and projection](./gles-mvp/README.md)
 * [Texture mapping](./gles-3d-cube-texture/README.md)
-* [Curve](./gles-curve/README.md)
 * [Parking Guideline](./gles-guideline/README.md)
 * [Lighting](./gles-lighting/README.md)
 * [OpenGL Mathmetics(GLM)](./gles-glm/README.md)

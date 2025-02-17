@@ -1,4 +1,5 @@
 ## Draw a triangle
 
-이 예제는 EGL surface위에 default primitive인 삼각형을 그리는 예제이다. 
+
+此示例是在 EGL 曲面上绘制三角形（默认图元）的示例。
 
