@@ -1,10 +1,10 @@
 ## Draw a 3D Cube
 
-이번 예제에서는 x,y,z 축과 축의 중심에 3D Cube를 그리게 됩니다. 이전 샘플을 확장하여 작성되었기 때문에 중복되는 부분은 이전 샘플 문서를 참고 부탁 드립니다.
+在此示例中，将在 x、y、z 轴和轴的中心上绘制 3D 立方体。由于这是通过扩展前面的示例编写的，因此请参阅前面的示例文档以了解任何重叠的部分。
 
 ### Vertex position과 color를 위한 Buffer 생성
 
-먼저 살펴 볼 내용은 `initOpenGL` 함수에 추가 된 부분입니다.
+首先要看的是“initOpenGL”函数的添加。
 
 ```C++
     char vShaderStr[] =
@@ -20,13 +20,12 @@
     		"}                                        \n";
 ```
 
-코드에서 보는 것처럼 이번에는 shader source에 몇 줄이 포함 된 것을 확인할 수 있습니다. 이 코드들은 다음을 위함입니다.
+正如您在代码中看到的，您可以看到这次着色器源包含几行。这些代码用于：
 
-- u_mvpMat : x, y 축을 기준으로 회전하여 cube의 모양을 정확히 보기 위한 변수
-- a_color, v_color : cube의 각 면을 다른 색으로 drawing하기 위한 변수
+- u_mvpMat : 通过围绕 x 和 y 轴旋转立方体来精确查看立方体形状的变量
+- a_color, v_color : 用于以不同颜色绘制立方体每个面的变量
 
-`u_mvpMat` 변수의 경우 메인 코드에서 변환을 위한 매트릭스 연산의 결과 값을 shader에 전달하여 해당 변환을 표현하게 됩니다. `a_color` 는 사용자로부터 입력 받는 color 매트릭스 값이며 이 값이 v_color 값이 복사되며 이 값이 fragment shader로 전달됩니다. 그러면 아래 코드와 같이
-
+`u_mvpMat` 对于变量来说，主代码中进行变换的矩阵运算的结果被传递给着色器来表达变换。 `a_color` 是用户输入的颜色矩阵值，该值被复制为v_color值，并将该值传递给片段着色器。然后，像下面的代码一样：
 ```C++
     char fShaderStr[] =
     		"varying lowp vec4 v_color;                        \n"
@@ -36,11 +35,9 @@
     		"}                                               \n";
 ```  
 
-별도의 변환 없이 전달된 값으로 fragment의 색상을 표현합니다.
+片段的颜色使用传递的值来表示，无需任何转换。接下来添加的是为顶点位置和颜色创建缓冲区的部分。
 
-다음으로는 추가된 것은 vertex position과 color를 위한 buffer를 생성하는 부분입니다.
-
-이전 예제에서 보면 Vertex 정보들이 clint memory에 저장되어 있고 이 데이터는 glDrawArrays 나 glDrawElemets 함수가 호출 될 때 graphics 메모리로 복사 되어야 합니다. 하지만 매 draw가 발생할 때마다 vertex 정보를 복사하는 것 대신에 graphics 메모리에 cache 된 데이터를 사용한다면 렌더링 성능을 향상 시킬 수 있습니다. 이를 위해서 사용되는 것이 **vertex buffer object(VBO)** 입니다. 
+在前面的示例中，顶点信息存储在 clint 内存中，当调用 glDrawArrays 或 glDrawElemets 函数时，必须将这些数据复制到图形内存中。但是，如果使用图形内存中缓存的数据而不是每次绘制时复制顶点信息，则可以提高渲染性能。 **顶点缓冲对象 (VBO)** 用于此目的。
 
 ```C++
     glGenBuffers(1, &vertexID);
@@ -59,17 +56,16 @@
     glBindBuffer(GL_ARRAY_BUFFER, axisColorID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(axisColor), axisColor, GL_STATIC_DRAW);
 ```
-VBO를 초기화하는 것은 위의 코드에서처럼 3단계로 나누어져 있습니다.
+初始化VBO分为三个步骤，如上面的代码所示。
 
-- glGenBuffers: buffer object 이름을 반환합니다. 일종의 식별자 역할을 함.
+- glGenBuffers: 返回缓冲区对象名称。用作一种标识符。
 - glBindBuffers: Use a previously created buffer as the active VBO.
-- glBufferData: 클라이언트 메모리에 있는 데이터를 VBO로 복사한다.
-
-이렇게 복사된 데이터를 이용하면 client에서 graphics 메모리로 drawing 할 때마다 복사하는 번거러움을 줄일 수 있습니다.
+- glBufferData: 将客户端内存中的数据复制到 VBO。
+通过使用这些复制的数据，您可以减少每次从客户端绘制到图形内存时复制数据的不便。
 
 ### X,Y,Z 축 과 3D Cube 그리기
 
-위에서 언급한 buffer를 이용해서 x,y,z 축을 그립니다.  
+使用上述缓冲区绘制 x、y 和 z 轴。
 
 ```C++
 	glBindBuffer(GL_ARRAY_BUFFER, axisVertexID);
@@ -81,7 +77,7 @@ VBO를 초기화하는 것은 위의 코드에서처럼 3단계로 나누어져 
 	glVertexAttribPointer(colorLoc, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 ```
 
-그리고 정면을 보게 되면 3D인지 알 수가 없으므로 아래와 같이 transformation과 projection을 적용합니다. 이에 대한 자세한 내용은 다음 샘플에서 다루도록 하겠습니다. 
+由于从正面观看时无法判断它是否为 3D，因此请应用如下所示的变换和投影。有关这方面的更多详细信息将在下一个示例中介绍。
 
 ```C++
 	glExtRotateX(fRotateX, mRotX);
@@ -92,10 +88,10 @@ VBO를 초기화하는 것은 위의 코드에서처럼 3단계로 나누어져 
 	glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, mvp);
 ```
 
-한 가지 여기서 더 보고 갈 것은 shader 변수 중 uniform, attribute, varying 인데 이에 대한 정의는 아래와 같습니다.
+这里还要看一下着色器变量中的uniform、attribute和variable，它们的定义如下。
 
 **Uniform**
-Application에서 OpenGL ES API를 통해 Shader로 전달되는 읽기 전용 값을 저장하는 변수. Uniform 변수는 Vertex Shader와 Fragment Shader에서 공유되며 주로 Matrix, Lighting Parameter, Color 등의 값을 저장하는데 사용된다.
+一个变量，用于存储通过 OpenGL ES API 从应用程序传递到 Shader 的只读值。 Uniform变量在Vertex Shader和Fragment Shader之间共享，主要用于存储Matrix、Lighting Parameter、Color等值。
 
 ```
 uniform mat4 viewProjMatrix;
@@ -107,7 +103,7 @@ glUniform*
 ```
  
 **Attribute**
-Vertex Shader에서만 사용가능한 타입으로 Vertex 각각의 정보를 전달하기 위해 사용된다. 일반적으로 Position, Normal, Texture Coordinate, Color 등의 정보가  전달된다.
+这是一种只能在顶点着色器中使用的类型，用于传达有关每个顶点的信息。一般传输位置、法线、纹理坐标、颜色等信息。
 
 ```
 attribute vec4 a_position;
@@ -118,8 +114,7 @@ glBindAttribLocation
 ```
 
 **Varying**
-Vertex Shader의 Output이자 Fragment Shader의 Input으로 사용될 변수를 지정하는 데 사용된다. Application 쪽에선 건드릴 수 없는 변수이므로 관련 API 또한 존재하지 않는다.
-
+用于指定用作顶点着色器的输出和片段着色器的输入的变量。由于它是应用程序端无法触及的变量，因此没有相关的API。
 ```
 varying vec2 texCoord;
 varying vec4 color;
