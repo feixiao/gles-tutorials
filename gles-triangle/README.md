@@ -1,53 +1,54 @@
 ## Draw a triangle
 
-첫 번째 예제는 EGL surface위에 default primitive인 삼각형을 그리는 예제입니다. 여기서는 단순히 삼각형을 그리는 것 외에 삼각형을 그리기 위한 준비 작업에는 어떤 것들이 있는지 살펴봅니다.
+第一个示例在 EGL 曲面上绘制默认图元（三角形）。在这里，我们来看看除了简单地绘制三角形之外，绘制三角形还需要哪些准备工作。
 
-OpenGL ES(이하 gles)을 이용해서 삼각형을 그리려면 이를 그리기 위한 일종의 캔버스가 준비되어야 합니다. 이를 위해서는 선행되어야 하는 작업들이 있습니다.
+要使用OpenGL ES（以下简称gles）绘制三角形，必须准备一种画布来绘制它。为此，必须首先完成一些任务。
 
-- Screen을 이용하여 윈도우를 생성
-- EGL을 이용하여 surface 생성
+- 使用Screen创建一个窗口
+- 使用 EGL 创建surface
 
-각각의 작업들을 살펴보면 다음과 같습니다.
 
-### Screen을 이용한 윈도우 생성
+每个任务的查看如下。
 
-QNX에서 window를 다루는 방법은 몇 가지가 있지만 그 중에 하나는 Screen이라는 Grahics sub-system을 이용하는 것입니다. 먼저 screen을 위한 context를 생성하고 해당 context를 이용해서 window를 하나 생성합니다. 이렇게 생성한 윈도우에 속성을 설정하는데 이 샘플에서는 color format과 opengl es 버전을 설정합니다.
+### 使用 Screen 创建窗口
+
+在 QNX 中处理窗口的方法有多种，其中之一是使用称为 Screen 的图形子系统。首先，为屏幕创建一个上下文，并使用该上下文创建一个窗口。在以这种方式创建的窗口上设置属性。在此示例中，设置了颜色格式和 opengl es 版本。
 
 ```C++
 screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_FORMAT, (const int[]){ SCREEN_FORMAT_RGBX8888 });
 screen_set_window_property_iv(screen_win, SCREEN_PROPERTY_USAGE, (const int[]){ SCREEN_USAGE_OPENGL_ES2 });
 ```
-
-Window 속성을 설정했다면 마지막으로 더블 버퍼링을 위한 윈도우 버퍼를 생성합니다.
+如果设置 Window 属性，最终会创建一个窗口缓冲区以进行双缓冲。
 
 ```C++
 screen_create_window_buffers(screen_win, 2);
 ```
 
-### EGL Surface 생성
+### 创建EGL Surface 
 
-이제 생성된 window에 EGL surface를 연결하는 작업이 필요합니다. 이를 위해서는 다음의 작업들이 선행됩니다.
+现在我们需要将 EGL 表面连接到创建的窗口。为了实现这一目标，需要完成以下任务。
 
-- 현재 연결된 display 정보 획득 및 display 초기화
-- 주어진 속성들과 매칭되는 EGL frame buffer 설정을 획득
-- egl context 생성
-- screen 윈도우로 부터 egl surface 생성
-- EGL rendering cotext를 현재 surface에 연결
+- 获取当前连接的显示器信息并初始化显示器
+- 获取与给定属性匹配的 EGL 帧缓冲区设置
+- 创建egl context
+- 从屏幕窗口创建egl surface
+- 将 EGL 渲染上下文附加到当前Surface
 
-여기까지 완료하였다면 그림을 그리기 위한 화면 설정은 완료되었다고 할 수 있습니다. 다음으로 진행해야 할 것은 vertex shader와 fragment shader 관련된 설정입니다. 
 
-### Vertex / fragment shader 설정
+如果您已经完成了这一步，则可以说绘图屏幕的设置已完成。接下来要做的是顶点着色器和片段着色器相关的设置。
 
-vertex shader와 fragment shader가 생소하다면 아래 링크의 내용을 한번 살펴보시기 바랍니다. (http://ptgmedia.pearsoncmg.com/images/chap1_9780321933881/elementLinks/01fig01_alt.jpg)
+### Vertex / fragment shader 设置
 
-vs와 fs의 설정은 다음의 과정을 통해 이루어집니다.
+如果您不熟悉顶点着色器和片段着色器，请查看下面链接的内容。 (http://ptgmedia.pearsoncmg.com/images/chap1_9780321933881/elementLinks/01fig01_alt.jpg)
 
-- Shader의 생성 및 컴파일
-- Program의 생성 및 링킹
+vs 和 fs 的设置是通过以下过程完成的。
 
-#### Shader의 생성 및 컴파일
+- Shader创建和编译
+- 程序创建和链接
 
-첫 번째 단계는 `glCreateShader` 함수를 통해서 shader 객체를 생성하는 것입니다. 객체가 정상적으로 생성되었다면 `glShaderSource` 함수를 이용해서 실제 shader 코드를 넘겨줍니다. 마지막으로 `glCompileShader` 함수를 호출하면 shader source를 넘겨받은 object가 compile 됩니다.
+#### Shader创建和编译
+
+第一步是通过"glCreateShader"函数创建一个着色器对象。 如果正确创建了对象，则使用"glShaderSource"函数传递实际的着色器代码。最后，当您调用"glCompileShader"函数时，接收着色器源的对象将被编译。
 
 ```C++
 GLuint LoadShader ( EGLenum type, const char *shaderSrc )
@@ -70,24 +71,25 @@ GLuint LoadShader ( EGLenum type, const char *shaderSrc )
 }
 ``` 
 
-### 삼각형 그리기 
+### 画一个三角形
 
-마지막으로 할 일은 화면이 실제로 삼각형을 그리는 것입니다. 이는 샘플의 `render` 함수에서 이루어지는데 호출 순서를 보면 다음과 같습니다.
+我们要做的最后一件事是确保屏幕确实绘制了三角形。这是在示例中的 render 函数中完成的，调用顺序如下。
 
-#### viewport 설정
 
-사용자가 임의로 실제로 표시될 화면 영역을 설정합니다. 만약 호출하지 않는다면 기본적으로 현재 디스플레이가 가지고 있는 정보를 viewport로 사용합니다.
+#### viewport设置
+
+用户任意设置实际可见屏幕区域。如果不调用，则当前显示器所持有的信息基本上用作视口。
 ```C++
 	// Set the viewport
 	glViewport ( 0, 0, surface_width, surface_height );
 ```
-#### color buffer 초기화
+#### 初始化color buffer
 
-`glClear` 함수를 호출함으로써 현재 화면을 `glClearColor`로 설정된 색상으로 칠한다. 
+通过调用`glClear`函数，当前屏幕将被绘制为`glClearColor`设置的颜色。
 
-#### vertex 정보를 로딩
+#### 加载vertex
 
-그림을 그리기 위해서는 vertex 정보를 읽어서 shader에 전달해 줘야 합니다. 이 예제에서는 아래와 같은 vertex shader source가 있습니다.
+为了绘制图片，您需要读取顶点信息并将其传递给着色器。在此示例中，有一个顶点着色器源，如下所示。
 
 ```
     char vShaderStr[] =
@@ -98,21 +100,19 @@ GLuint LoadShader ( EGLenum type, const char *shaderSrc )
     		"}                                        \n";
 ```
 
-여기에서 vPosition에 삼각형의 vertex 정보를 읽어서 연결해 주어야 하는데 이 동작을 하는 함수가 `glVertexAttribPointer` 입니다. 
+这里，需要读取三角形的顶点信息并将其连接到vPosition，执行此操作的函数是`glVertexAttribPointer`。
 
 ```C++
 glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, vTriangle);
 ```
-
-첫 번째 매개변수의 `0`이 vPosition을 의미하며 마지막 매개변수인 vTriangle과 연결됨을 알 수 있습니다.
+您可以看到第一个参数中的“0”表示 vPosition，并连接到最后一个参数 vTriangle。
 
 
 > *NOTE :*
-> 어떻게 0이 vPosition이 되는 것일까요? 그 답은 다음의 링크에서 확인할 수 있습니다. (https://www.opengl.org/wiki/Vertex_Shader#Inputs)
+> 0如何变成vPosition？答案可以在以下链接中找到。 (https://www.opengl.org/wiki/Vertex_Shader#Inputs)
  
-> 요약하자면 shader 안에서 혹은 gles API를 통해 명시적으로 사용자 입력(여기서는 삼각형 vertex 정보)가 binding 되지 않는다면 index가 OpenGL ES에 의해서 자동으로 할당됩니다. 그러므로 실제로 코드 작성 시에는 명시적으로 연결을 해 주는 것이 좋습니다. 이 부분은 다른 샘플에서 확인하실 수 있습니다.
+> 总之，如果用户输入（这里是三角形顶点信息）没有在着色器中或通过gles API显式绑定，则索引由OpenGL ES自动分配。因此，建议在编写代码时显式连接。您可以在其他示例中检查这一点。
     
 
-#### Drawing 함수 호출
-
-삼각형을 그리는 마지막 단계로는 실제로 OpenGL ES에게 해당 삼각형을 그리도록 `glDrawArrays` 함수를 호출하는 것입니다.
+#### 绘图函数调用
+绘制三角形的最后一步是调用由S自动分配的“glDrawArrays”函数，以实际告诉OpenGL ES绘制三角形。因此，建议在编写代码时显式连接。您可以在其他示例中检查这一点。
